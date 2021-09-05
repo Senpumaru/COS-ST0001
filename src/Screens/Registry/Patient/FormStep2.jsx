@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from "@material-ui/core";
+import { Button, Grid, Paper, TextField, Typography } from "@material-ui/core";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import ruLocale from "date-fns/locale/ru";
@@ -7,116 +7,304 @@ import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 export const FormStep2 = () => {
-  /* React Hook Form */
+  /*** React Hook Form ***/
   const {
     control,
     watch,
     formState: { errors },
     reset,
+    getValues,
+    setValue,
   } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "blockGroupCodes",
+    name: "blockCodes",
   });
 
-  const watchCodes = watch("blockGroupCodes"); // Watch data
+  /* React Hook Form - Watch*/
+  const watchBlockGroupCode = watch("blockGroupCode");
+  const watchBlockGroupCount = watch("blockGroupCount");
+  const watchBlockGroupYear = watch("blockGroupYear");
+  const watchCodes = watch("blockCodes");
 
-  // BlockGroup Function
+  /*** Functions ***/
 
+  /* BlockGroup Function */
+  function blockGroup() {
+    const groupStartCode = parseFloat(watchBlockGroupCode);
+
+    // Check for NaN
+    var groupAmount = 1;
+    if (parseFloat(watchBlockGroupCount) > 0) {
+      groupAmount = parseFloat(watchBlockGroupCount);
+    }
+    const groupYear = String(moment(watchBlockGroupYear).format("YYYY")).slice(-2);
+    const groupLastCode = groupStartCode + groupAmount - 1;
+    setValue("blockGroupLastCode", groupLastCode);
+    const range = [...Array(groupAmount)].map((_, i) => i + groupStartCode);
+
+    const groupCode = String(groupStartCode) + "-" + String(groupLastCode).slice(-2) + "/" + groupYear;
+
+    return { groupStartCode, groupLastCode, groupCode, groupAmount, groupYear };
+  }
+
+  
+  /* Block Function */
   function codeGroup(index) {
-    const startCode = watchCodes[index].code;
-    const amount = watchCodes[index].amount;
-    const year = String(moment(watchCodes[index].year).format("YYYY")).slice(-2);
-    const lastCode = parseFloat(startCode) + parseFloat(amount) - 1;
-    const groupCode = String(startCode) + "-" + String(lastCode).slice(-2) + "/" + year;
-    return {startCode, groupCode};
-    
+    const groupYear = String(moment(watchBlockGroupYear).format("YYYY")).slice(-2);
+    const startCode = blockGroup().groupStartCode;
+    const overAllAmount = blockGroup().groupAmount;
+    if (watchCodes.length != 0) {
+      if (index === 0) {
+        // Firts Block
+        const amount = watchCodes[index].amount;
+
+        const lastCode = parseFloat(startCode) + parseFloat(amount) - 1;
+        if (startCode === lastCode) {
+          blockCode = String(startCode) + "/" + groupYear;
+        } else {
+          blockCode = String(startCode) + "-" + String(lastCode).slice(-2) + "/" + groupYear;
+        }
+
+        const newStartCode = startCode;
+
+        watchCodes[index]["code"] = newStartCode;
+        watchCodes[index]["amount"] = amount;
+        watchCodes[index]["block"] = blockCode;
+
+        return { newStartCode, lastCode, blockCode };
+      } else {
+        // Subsequent Blocks
+        var previousAmount = 1;
+        if (parseFloat(watchCodes[index - 1]?.amount) > 0) {
+          previousAmount = parseFloat(watchCodes[index - 1].amount);
+        }
+
+        var newAmount = 1;
+        if (parseFloat(watchCodes[index]?.amount) > 0) {
+          newAmount = parseFloat(watchCodes[index].amount);
+        }
+
+        if (watchCodes[index]) {
+          const newStartCode = watchCodes[index - 1]["code"] + previousAmount;
+          watchCodes[index]["code"] = newStartCode;
+
+          const lastCode = parseFloat(newStartCode) + newAmount - 1;
+
+          var blockCode = "";
+          if (newStartCode === lastCode) {
+            blockCode = String(newStartCode) + "/" + groupYear;
+          } else {
+            blockCode = String(newStartCode) + "-" + String(lastCode).slice(-2) + "/" + groupYear;
+          }
+          watchCodes[index]["block"] = blockCode;
+
+          return { newStartCode, blockCode, lastCode, amount: newAmount };
+        }
+      }
+    }
   }
 
   return (
     <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
-      <Typography>На основании блоков автоматически будут созданы соответсвующие МП</Typography>
+      <Grid item md={4} sm={4} xs={12}>
+        <Controller
+          name={"blockGroupCode"}
+          control={control}
+          mode="onChange"
+          defaultValue={""}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              inputProps={{ min: 1, max: 1000000, type: "number" }}
+              label="Начальный номер"
+              variant="outlined"
+              error={!!errors.blockGroupCode}
+              helperText={errors.blockGroupCode?.message}
+            />
+          )}
+          rules={{
+            required: "Обязательное поле",
+            max: {
+              value: 1000000,
+              message: "Слишком большое число",
+            },
+            validate: {
+              matchLastCodes: () => {
+                const { blockGroupLastCode } = getValues();
+                return blockGroupLastCode === codeGroup(watchCodes.length - 1)?.lastCode || "Не прикреплены все блоки";
+              },
+            },
+          }}
+        />
+      </Grid>
+      <Grid item md={1} sm={1} xs={1}>
+        <Controller
+          rules={{ required: "Обязательное поле" }}
+          name="blockGroupCount"
+          control={control}
+          mode="onBlur"
+          defaultValue={1}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              inputProps={{ min: 1, max: 100, type: "number" }}
+              label="Кол."
+              variant="outlined"
+              error={!!errors.blockGroupCount}
+              helperText={errors.blockGroupCount?.message}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item md={2} sm={2} xs={2}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+          <Controller
+            name={"blockGroupYear"}
+            defaultValue={new Date()}
+            control={control}
+            rules={{ required: "Обязательное поле" }}
+            render={({ field: { ref, ...rest } }) => (
+              <DatePicker
+                {...rest}
+                views={["year"]}
+                defaultChecked={false}
+                id="blockGroupYear-id"
+                label="Год"
+                maxDate={new Date()}
+                variant="inline"
+                inputVariant="outlined"
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} error={!!errors.blockGroupYear} helperText={errors.blockGroupYear?.message} />
+                )}
+              />
+            )}
+          />
+        </LocalizationProvider>
+      </Grid>
+      <Grid item md={5} sm={5} xs={12}>
+        <TextField
+          fullWidth
+          label="Блок группа"
+          variant="outlined"
+          value={blockGroup().groupStartCode === "" ? "" : blockGroup().groupCode}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+      </Grid>
+      <Grid item md={6} sm={6} xs={12}>
+        <Controller
+          control={control}
+          name="organ"
+          rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              id="Organ-TextField"
+              label="Орган"
+              color="secondary"
+              error={errors.organ ? true : false}
+              helperText={errors?.organ && errors.organ.message}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item md={6} sm={6} xs={12}>
+        <Controller
+          control={control}
+          name="department"
+          rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              id="Department-TextField"
+              label="Отделение"
+              color="secondary"
+              error={errors.department ? true : false}
+              helperText={errors?.department && errors.department.message}
+            />
+          )}
+        />
+      </Grid>
+      <Typography>На основании номеров блоков (по умолчанию) автоматически будут созданы соответсвующие МП</Typography>
+
       {fields.map((item, index) => {
         return (
           <Grid key={item.id} container spacing={1} item md={12} sm={12} xs={12}>
             <React.Fragment>
-              <Grid item md={6} sm={6} xs={6}>
+              <Grid item md={3} sm={3} xs={3}>
                 <Controller
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      inputProps={{ min: 0, max: 10000000, type: "number" }}
-                      label="Номер первого блока"
-                      variant="outlined"
-                      error={!!errors.blockGroupCodes?.[index]?.code}
-                      helperText={errors.blockGroupCodes?.[index]?.code?.message}
-                    />
-                  )}
                   rules={{ required: "Обязательное поле" }}
-                  name={`blockGroupCodes[${index}].code`}
+                  name={`blockCodes[${index}].code`}
                   control={control}
                   mode="onBlur"
-                  defaultValue={item.code}
+                  defaultValue={1}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      value={codeGroup(index).newStartCode}
+                      inputProps={{ type: "number" }}
+                      label="Начальный номер блока"
+                      variant="outlined"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      error={!!errors.blockCodes?.[index]?.code}
+                      helperText={errors.blockCodes?.[index]?.code?.message}
+                    />
+                  )}
                 />
               </Grid>
-              <Grid item md={2} sm={2} xs={2}>
+              <Grid item md={1} sm={1} xs={1}>
                 <Controller
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      inputProps={{ min: 1, max: 100, type: "number" }}
-                      label="Кол."
+                      inputProps={{
+                        min: 1,
+                        max: parseInt(blockGroup().groupLastCode) - parseInt(codeGroup(index).newStartCode) + 1,
+                        type: "number",
+                      }}
+                      label="Куски."
                       variant="outlined"
-                      error={!!errors.blockGroupCodes?.[index]?.amount}
-                      helperText={errors.blockGroupCodes?.[index]?.amount?.message}
+                      error={!!errors.blockCodes?.[index]?.amount}
+                      helperText={errors.blockCodes?.[index]?.amount?.message}
                     />
                   )}
                   rules={{ required: "Обязательное поле" }}
-                  name={`blockGroupCodes[${index}].amount`}
+                  name={`blockCodes[${index}].amount`}
                   control={control}
                   mode="onBlur"
                   defaultValue={1}
                 />
               </Grid>
-              <Grid item md={2} sm={2} xs={2}>
-                <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
-                  <Controller
-                    name={`blockGroupCodes[${index}].year`}
-                    defaultValue={new Date()}
-                    control={control}
-                    rules={{ required: "Обязательное поле" }}
-                    render={({ field: { ref, ...rest } }) => (
-                      <DatePicker
-                        {...rest}
-                        views={["year"]}
-                        defaultChecked={false}
-                        id="blockYear-id"
-                        label="Год"
-                        maxDate={new Date()}
-                        variant="inline"
-                        inputVariant="outlined"
-                        KeyboardButtonProps={{
-                          "aria-label": "change date",
-                        }}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            error={!!errors.blockGroupCodes?.[index]?.year}
-                            helperText={errors.blockGroupCodes?.[index]?.year?.message}
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={12}>
+
+              <Grid item md={3} sm={3} xs={3}>
                 <TextField
                   fullWidth
-                  value={codeGroup(index).startCode === "" ? "" : codeGroup(index).groupCode}
+                  value={codeGroup(index).newStartCode === "" ? "" : codeGroup(index).lastCode}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  label="Конечный номер"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item md={5} sm={5} xs={12}>
+                <TextField
+                  fullWidth
+                  value={codeGroup(index).blockCode}
                   InputProps={{
                     readOnly: true,
                   }}
@@ -134,22 +322,27 @@ export const FormStep2 = () => {
       <Grid container spacing={2}>
         <Grid item md={6}>
           <Button
+            variant="outlined"
             onClick={() => {
-              reset({ code: "" }, { amount: "" });
+              reset();
             }}
           >
-            Отмена
+            Сброс
           </Button>
         </Grid>
-        <Grid item md={6}>
-          <Button
-            onClick={() => {
-              append({ code: "" }, { amount: "" });
-            }}
-          >
-            Добавить
-          </Button>
-        </Grid>
+
+        {blockGroup()?.groupLastCode === codeGroup(watchCodes.length - 1)?.lastCode ? null : (
+          <Grid item md={6}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                append({ code: "" }, { amount: "" }, { year: "" });
+              }}
+            >
+              Добавить
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

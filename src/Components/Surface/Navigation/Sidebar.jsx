@@ -34,7 +34,7 @@ function Sidebar(props) {
         <ListItem button component={Link} to="/search">
           <ListItemText primary="Поиск" />
         </ListItem>
-        <ListItem button component={Link} to="/registry">
+        <ListItem button component={Link} to="/registry/patient">
           <ListItemText primary="Регистрация" />
         </ListItem>
         

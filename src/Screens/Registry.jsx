@@ -18,15 +18,17 @@ function Registry() {
 
   return (
     <React.Fragment>
-      <Typography variant="h4">Регистрация</Typography>
+      <Box sx={{ flexGrow: 1, p: 1 }}>
+        <Typography variant="h4">Регистрация</Typography>
+
+        <Typography variant="h6">Выберите объект для регистрации</Typography>
+      </Box>
       <Tabs value={value} onChange={handleTabs} aria-label="Tabs">
         <Tab component={Link} to={`${url}/patient`} value="one" label="Пациент" />
         <Tab component={Link} to={`${url}/block`} value="two" label="Блоки" />
         <Tab component={Link} to={`${url}/slide`} value="three" label="Микропрепараты (МП)" />
       </Tabs>
-      <Box sx={{ flexGrow: 1, p: 2 }}>
-        <Typography>Выебрите объект для регистрации</Typography>
-      </Box>
+
       <Switch>
         <Route path={`${path}/patient`}>
           <PatientRegistry />

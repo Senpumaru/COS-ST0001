@@ -1,9 +1,20 @@
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, MenuItem, TextField } from "@material-ui/core";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import ruLocale from "date-fns/locale/ru";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
+
+const GENDER = [
+  {
+    value: "Male",
+    label: "М",
+  },
+  {
+    value: "Female",
+    label: "Ж",
+  },
+];
 
 function FormStep1() {
   const {
@@ -11,11 +22,9 @@ function FormStep1() {
     formState: { errors },
   } = useFormContext();
 
-  
-
   return (
     <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
-      <Grid item md={8} sm={8} xs={12}>
+      <Grid item md={7} sm={7} xs={12}>
         <Controller
           control={control}
           name="ambulatoryNumber"
@@ -33,12 +42,37 @@ function FormStep1() {
           )}
         />
       </Grid>
-      <Grid item md={4} sm={4} xs={12}>
+      <Grid item md={2} sm={2} xs={2}>
+        <Controller
+          control={control}
+          name="gender"
+          rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              select
+              id="Gender-TextField"
+              label="Пол"
+              color="secondary"
+              error={errors.gender ? true : false}
+              helperText={errors?.gender && errors.gender.message}
+            >
+              {GENDER.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+      </Grid>
+      <Grid item md={3} sm={3} xs={3}>
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
           <Controller
             name="dateBirth"
             control={control}
-            rules={{ required: "Обязательное поле"}}
+            rules={{required: "Обязательное поле"}}
             render={({ field: { ref, ...rest } }) => (
               <DatePicker
                 {...rest}
@@ -63,6 +97,24 @@ function FormStep1() {
             )}
           />
         </LocalizationProvider>
+      </Grid>
+      <Grid item md={12} sm={12} xs={12}>
+        <Controller
+          control={control}
+          name="orginization"
+          rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              id="Orginization-TextField"
+              label="Организация"
+              color="secondary"
+              error={errors.orginization ? true : false}
+              helperText={errors?.orginization && errors.orginization.message}
+            />
+          )}
+        />
       </Grid>
       <Grid item md={4} sm={4} xs={12}>
         <Controller

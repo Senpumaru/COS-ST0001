@@ -7,18 +7,21 @@ export const initialState = {
   List: [],
   Create: {
     ambulatoryNumber: "",
+    orginization:"",
+    gender:"",
     firstName: "",
     middleName: "",
     lastName: "",
     address: "",
     dateBirth: null,
+    blockCodes: [],
   },
   Loading: false,
   Success: false,
   Error: false,
 };
 
-// Slice
+/* Slices */
 
 const patientSlice = createSlice({
   name: "Patients",
@@ -26,7 +29,7 @@ const patientSlice = createSlice({
   reducers: {
     patientList: (state, action) => {
       state.List = action.payload;
-      state.Loading = true;
+      state.Loading = false;
       state.Error = false;
     },
     Loading: (state, action) => {
@@ -39,7 +42,7 @@ const patientSlice = createSlice({
       state.Loading = false;
     },
     CreateSuccess: (state, action) => {
-      state.Create = action.payload;
+      state.Create = initialState.Create;
       state.Loading = false;
       state.Success = true;
     },
@@ -59,14 +62,23 @@ export const { Loading, CreateStep, CreateSuccess, CreateError, CreateReset, Del
   patientSlice.actions;
 export default patientSlice.reducer;
 
-// Actions
+/* Actions */
 
 const SERVER_URL = "http://localhost/api/ST0001/";
 
-export const fetchPatients = () => async (dispatch) => {
+// Patients
+
+export const resetPatients = () => async (dispatch) => {
+  dispatch(CreateReset());
+};
+
+export const fetchPatients = (search) => async (dispatch) => {
+  dispatch(Loading());
   try {
-    await axios.get(SERVER_URL + "patients/").then((response) => {
-      dispatch(patientList(response.data));
+    await axios.get(SERVER_URL + `patients?search=${search}`).then((response) => {
+      setTimeout(() => {
+        dispatch(patientList(response.data));
+      }, 2000);
     });
   } catch (error) {
     return console.error(error.message);
@@ -77,27 +89,23 @@ export const createStep = (instance) => async (dispatch) => {
   dispatch(Loading());
   setTimeout(() => {
     dispatch(CreateStep(instance));
-  }, 1000);
+  }, 2000);
 };
 
 export const createPatient = (instance) => async (dispatch) => {
   dispatch(Loading());
   try {
+    // Success
     const { data } = await axios.post(SERVER_URL + "patients/create/", instance);
     setTimeout(() => {
       dispatch(CreateSuccess(data));
-    }, 2000);
+    }, 3000);
 
-    setTimeout(() => {
-      dispatch(CreateReset());
-    }, 10000);
+    // Error
   } catch (error) {
     setTimeout(() => {
-      dispatch(CreateError(error.response.data.error));
-    }, 2000);
-
-    setTimeout(() => {
-      dispatch(CreateReset());
-    }, 10000);
+      console.log(error.response);
+      dispatch(CreateError(error.response.data ? error.response.data.error : error.message));
+    }, 3000);
   }
 };
