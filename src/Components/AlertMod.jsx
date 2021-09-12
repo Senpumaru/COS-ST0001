@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { resetPatients } from "../Store/Slices/patientSlice";
 import CloseIcon from "@material-ui/icons/Close";
 
+
+
 function AlertMod(props) {
   const { text, open: openAlert, state: setOpenAlert, severity, color } = props;
   const dispatch = useDispatch();
@@ -17,7 +19,6 @@ function AlertMod(props) {
               color="inherit"
               size="small"
               onClick={() => {
-                dispatch(resetPatients());
                 setOpenAlert(false);
               }}
             >

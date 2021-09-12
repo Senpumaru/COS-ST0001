@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ruLocale from "date-fns/locale/ru";
 
 import { createBlocks } from "../../../Store/Slices/blockSlice";
-import FormStep2 from "../Patient/FormStep2";
+import FormBlockChoice from "../Patient/FormBlockChoice";
 import moment from "moment";
 import { useEffect } from "react";
 import { fetchPatients } from "../../../Store/Slices/patientSlice";

@@ -1,6 +1,6 @@
 import React from 'react'
 
-function SlideRegistry() {
+function BlockGroup() {
     return (
         <div>
             
@@ -8,4 +8,4 @@ function SlideRegistry() {
     )
 }
 
-export default SlideRegistry
+export default BlockGroup

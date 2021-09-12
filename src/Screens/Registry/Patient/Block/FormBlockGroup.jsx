@@ -5,8 +5,27 @@ import ruLocale from "date-fns/locale/ru";
 import moment from "moment";
 import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { alpha, styled } from "@mui/material/styles";
+import { Alert } from "@mui/material";
 
-export const FormStep2 = () => {
+const SpecTextField = styled(TextField)({
+  "& label.Mui-focused": {
+    color: "#f57f17",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "#f57f17",
+  },
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {
+      borderColor: "#263238",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#f57f17",
+    },
+  },
+});
+
+export const FormBlockGroup = () => {
   /*** React Hook Form ***/
   const {
     control,
@@ -49,7 +68,6 @@ export const FormStep2 = () => {
     return { groupStartCode, groupLastCode, groupCode, groupAmount, groupYear };
   }
 
-  
   /* Block Function */
   function codeGroup(index) {
     const groupYear = String(moment(watchBlockGroupYear).format("YYYY")).slice(-2);
@@ -108,14 +126,53 @@ export const FormStep2 = () => {
 
   return (
     <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
+      <Grid item md={12} sm={12} xs={12}>
+        <Typography>Укажите группу содержащие блоки пациента</Typography>
+      </Grid>
+      <Grid item md={12} sm={12} xs={12}>
+        <Controller
+          control={control}
+          name="blockOrgan"
+          // rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <SpecTextField
+              {...field}
+              fullWidth
+              id="Organ-SpecTextField"
+              label="Орган"
+              color="secondary"
+              error={errors.blockOrgan ? true : false}
+              helperText={errors?.blockOrgan && errors.blockOrgan.message}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item md={12} sm={12} xs={12}>
+        <Controller
+          control={control}
+          name="blockDepartment"
+          // rules={{ required: "Обязательное поле" }}
+          render={({ field }) => (
+            <SpecTextField
+              {...field}
+              fullWidth
+              id="Department-SpecTextField"
+              label="Отделение"
+              color="secondary"
+              error={errors.department ? true : false}
+              helperText={errors?.department && errors.department.message}
+            />
+          )}
+        />
+      </Grid>
       <Grid item md={4} sm={4} xs={12}>
         <Controller
           name={"blockGroupCode"}
           control={control}
-          mode="onChange"
+          mode="onBlur"
           defaultValue={""}
           render={({ field }) => (
-            <TextField
+            <SpecTextField
               {...field}
               fullWidth
               inputProps={{ min: 1, max: 1000000, type: "number" }}
@@ -126,7 +183,7 @@ export const FormStep2 = () => {
             />
           )}
           rules={{
-            required: "Обязательное поле",
+            // required: "Обязательное поле",
             max: {
               value: 1000000,
               message: "Слишком большое число",
@@ -134,7 +191,11 @@ export const FormStep2 = () => {
             validate: {
               matchLastCodes: () => {
                 const { blockGroupLastCode } = getValues();
-                return blockGroupLastCode === codeGroup(watchCodes.length - 1)?.lastCode || "Не прикреплены все блоки";
+                if (watchBlockGroupCode != "") {
+                  return (
+                    blockGroupLastCode === codeGroup(watchCodes.length - 1)?.lastCode || "Не прикреплены все блоки"
+                  );
+                }
               },
             },
           }}
@@ -142,13 +203,13 @@ export const FormStep2 = () => {
       </Grid>
       <Grid item md={1} sm={1} xs={1}>
         <Controller
-          rules={{ required: "Обязательное поле" }}
+          // rules={{ required: "Обязательное поле" }}
           name="blockGroupCount"
           control={control}
           mode="onBlur"
           defaultValue={1}
           render={({ field }) => (
-            <TextField
+            <SpecTextField
               {...field}
               fullWidth
               inputProps={{ min: 1, max: 100, type: "number" }}
@@ -166,7 +227,7 @@ export const FormStep2 = () => {
             name={"blockGroupYear"}
             defaultValue={new Date()}
             control={control}
-            rules={{ required: "Обязательное поле" }}
+            // rules={{ required: "Обязательное поле" }}
             render={({ field: { ref, ...rest } }) => (
               <DatePicker
                 {...rest}
@@ -181,7 +242,11 @@ export const FormStep2 = () => {
                   "aria-label": "change date",
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} error={!!errors.blockGroupYear} helperText={errors.blockGroupYear?.message} />
+                  <SpecTextField
+                    {...params}
+                    error={!!errors.blockGroupYear}
+                    helperText={errors.blockGroupYear?.message}
+                  />
                 )}
               />
             )}
@@ -189,7 +254,7 @@ export const FormStep2 = () => {
         </LocalizationProvider>
       </Grid>
       <Grid item md={5} sm={5} xs={12}>
-        <TextField
+        <SpecTextField
           fullWidth
           label="Блок группа"
           variant="outlined"
@@ -199,44 +264,11 @@ export const FormStep2 = () => {
           }}
         />
       </Grid>
-      <Grid item md={6} sm={6} xs={12}>
-        <Controller
-          control={control}
-          name="organ"
-          rules={{ required: "Обязательное поле" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="Organ-TextField"
-              label="Орган"
-              color="secondary"
-              error={errors.organ ? true : false}
-              helperText={errors?.organ && errors.organ.message}
-            />
-          )}
-        />
+      <Grid item md={12} sm={12} xs={12}>
+        <Alert severity="info">
+          При создании блоков будут созданы соответсвующие "виртуальные слайды"
+        </Alert>
       </Grid>
-      <Grid item md={6} sm={6} xs={12}>
-        <Controller
-          control={control}
-          name="department"
-          rules={{ required: "Обязательное поле" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="Department-TextField"
-              label="Отделение"
-              color="secondary"
-              error={errors.department ? true : false}
-              helperText={errors?.department && errors.department.message}
-            />
-          )}
-        />
-      </Grid>
-      <Typography>На основании номеров блоков (по умолчанию) автоматически будут созданы соответсвующие МП</Typography>
-
       {fields.map((item, index) => {
         return (
           <Grid key={item.id} container spacing={1} item md={12} sm={12} xs={12}>
@@ -249,7 +281,7 @@ export const FormStep2 = () => {
                   mode="onBlur"
                   defaultValue={1}
                   render={({ field }) => (
-                    <TextField
+                    <SpecTextField
                       {...field}
                       fullWidth
                       value={codeGroup(index).newStartCode}
@@ -268,7 +300,7 @@ export const FormStep2 = () => {
               <Grid item md={1} sm={1} xs={1}>
                 <Controller
                   render={({ field }) => (
-                    <TextField
+                    <SpecTextField
                       {...field}
                       fullWidth
                       inputProps={{
@@ -291,7 +323,7 @@ export const FormStep2 = () => {
               </Grid>
 
               <Grid item md={3} sm={3} xs={3}>
-                <TextField
+                <SpecTextField
                   fullWidth
                   value={codeGroup(index).newStartCode === "" ? "" : codeGroup(index).lastCode}
                   InputProps={{
@@ -302,7 +334,7 @@ export const FormStep2 = () => {
                 />
               </Grid>
               <Grid item md={5} sm={5} xs={12}>
-                <TextField
+                <SpecTextField
                   fullWidth
                   value={codeGroup(index).blockCode}
                   InputProps={{
@@ -319,10 +351,11 @@ export const FormStep2 = () => {
           </Grid>
         );
       })}
-      <Grid container spacing={2}>
+      <Grid container p={1} spacing={2}>
         <Grid item md={6}>
           <Button
-            variant="outlined"
+            color="secondary"
+            variant="contained"
             onClick={() => {
               reset();
             }}
@@ -339,7 +372,7 @@ export const FormStep2 = () => {
                 append({ code: "" }, { amount: "" }, { year: "" });
               }}
             >
-              Добавить
+              Добавить блок к группе
             </Button>
           </Grid>
         )}
@@ -348,4 +381,4 @@ export const FormStep2 = () => {
   );
 };
 
-export default FormStep2;
+export default FormBlockGroup;

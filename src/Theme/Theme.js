@@ -11,24 +11,66 @@ const theme = createTheme(
     palette: {
       common: {},
       primary: {
-        light: "#918e84",
-        main: "#575550",
-        dark: "#33322f",
+        light: "#455a64",
+        main: "#263238",
+        dark: "#263238",
       },
       secondary: {
-        light: "#ffefba",
-        main: "#edbc1c",
-        dark: "#735a07",
+        light: "#fbc02d",
+        main: "#f9a825",
+        dark: "#f57f17",
+      },
+      warning: {
+        light: "#e64a19",
+        main: "#d84315",
+        dark: "#bf360c",
+      },
+      error: {
+        light: "#d32f2f",
+        main: "#c62828",
+        dark: "#b71c1c",
+      },
+      success: {
+        light: "#fbc02d",
+        main: "#f9a825",
+        dark: "#f57f17",
+      },
+      info: {
+        light: "#455a64",
+        main: "#37474f",
+        dark: "#263238",
       },
     },
+
     typography: {
       htmlFontSize: 16,
-      fontSize: 14,
-      fontFamily: ["Montserrat", "sans-serif"].join(","),
+      fontSize: 16,
+      fontFamily: ["Play", "sans-serif"].join(","),
+      h1:{
+        fontWeight:400,
+        fontSize:"3rem",
+      },
+      h2:{
+        fontWeight:250,
+        fontSize:"2.5rem",
+      },
+      h3:{
+        fontWeight:200,
+        fontSize:"2rem",
+      },
+      h4:{
+        fontWeight:150,
+        fontSize:"1.75rem",
+      },
+      h5:{
+        fontWeight:100,
+        fontSize:"1.5rem",
+      },
+      h6:{
+        fontWeight:50,
+        fontSize:"1.25rem",
+      },
 
-      h2: {},
-      h3: {},
-      h5: {},
 
       button: {
         minWidth: 2,

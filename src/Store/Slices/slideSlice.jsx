@@ -2,26 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // State
-
 export const initialState = {
   List: [],
   Create: {
-    ambulatoryNumber: "",
-    orginization:"",
-    department:"",
-    local:true,
-    gender:"",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    country: "",
-    city: "",
-    street: "",
-    house: "",
-    flat: "",
-    dateBirth: null,
-    blockCodes: [],
-    slideCodes: [],
+    Patient:"",
+    blockGroupCodes: [],
   },
   Loading: false,
   Success: false,
@@ -29,12 +14,11 @@ export const initialState = {
 };
 
 /* Slices */
-
-const patientSlice = createSlice({
-  name: "Patients",
+const blockSlice = createSlice({
+  name: "Blocks",
   initialState,
   reducers: {
-    patientList: (state, action) => {
+    blockList: (state, action) => {
       state.List = action.payload;
       state.Loading = false;
       state.Error = false;
@@ -43,10 +27,6 @@ const patientSlice = createSlice({
       state.Loading = true;
       state.Error = false;
       state.Success = false;
-    },
-    CreateStep: (state, action) => {
-      state.Create = action.payload;
-      state.Loading = false;
     },
     CreateSuccess: (state, action) => {
       state.Create = initialState.Create;
@@ -59,15 +39,15 @@ const patientSlice = createSlice({
     },
     CreateReset: () => initialState,
     DeleteSuccess: (state, action) => {
-      state.List.filter((patient) => patient.id !== action.payload.id);
+      
       state.Loading = false;
     },
   },
 });
 
-export const { Loading, CreateStep, CreateSuccess, CreateError, CreateReset, DeleteSuccess, patientList } =
-  patientSlice.actions;
-export default patientSlice.reducer;
+export const { Loading, CreateStep, CreateSuccess, CreateError, CreateReset, DeleteSuccess, blockList } =
+  blockSlice.actions;
+export default blockSlice.reducer;
 
 /* Actions */
 
@@ -75,16 +55,16 @@ const SERVER_URL = "http://localhost/api/ST0001/";
 
 // Patients
 
-export const resetPatients = () => async (dispatch) => {
+export const resetBlocks = () => async (dispatch) => {
   dispatch(CreateReset());
 };
 
-export const fetchPatients = (search) => async (dispatch) => {
+export const fetchBlocks = (search) => async (dispatch) => {
   dispatch(Loading());
   try {
-    await axios.get(SERVER_URL + `patients?search=${search}`).then((response) => {
+    await axios.get(SERVER_URL + `blocks?search=${search}`).then((response) => {
       setTimeout(() => {
-        dispatch(patientList(response.data));
+        dispatch(blockList(response.data));
       }, 2000);
     });
   } catch (error) {
@@ -92,28 +72,20 @@ export const fetchPatients = (search) => async (dispatch) => {
   }
 };
 
-export const createStep = (instance) => async (dispatch) => {
-  dispatch(Loading());
-  setTimeout(() => {
-    dispatch(CreateStep(instance));
-  }, 2000);
-};
-
-export const createPatient = (instance) => async (dispatch) => {
+export const createBlocks = (instance) => async (dispatch) => {
   dispatch(Loading());
   try {
     // Success
-    const { data } = await axios.post(SERVER_URL + "patients/create/", instance);
+    const { data } = await axios.post(SERVER_URL + "blocks/create/", instance);
     setTimeout(() => {
       dispatch(CreateSuccess(data));
-    }, 3000);
+    }, 2000);
 
     // Error
   } catch (error) {
     setTimeout(() => {
-      console.log(error.message);
       console.log(error.response);
       dispatch(CreateError(error.response.data ? error.response.data.error : error.message));
-    }, 3000);
+    }, 2000);
   }
 };
