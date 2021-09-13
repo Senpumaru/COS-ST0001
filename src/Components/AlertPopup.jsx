@@ -6,7 +6,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 
 
-function AlertMod(props) {
+function AlertPopup(props) {
   const { text, open: openAlert, state: setOpenAlert, severity, color } = props;
   const dispatch = useDispatch();
   return (
@@ -35,4 +35,4 @@ function AlertMod(props) {
   );
 }
 
-export default AlertMod;
+export default AlertPopup;

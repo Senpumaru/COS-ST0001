@@ -1,32 +1,36 @@
-import { Box, Button, Tab, Tabs, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import React from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouteMatch } from "react-router";
-import { Link } from "react-router-dom";
+import { Box, Tab, Tabs, Typography } from "@material-ui/core";
+import React, { useState } from "react";
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
+import FormSlides from "./FormSlides";
 
 function SlideRegistry() {
-    let { path, url } = useRouteMatch();
+  let { path, url } = useRouteMatch();
 
-  const [value, setValue] = useState("one");
+  const [value, setValue] = useState("two");
 
   const handleTabs = (tab, newTab) => {
     setValue(newTab);
   };
 
   return (
-    <Box sx={{ flexGrow: 1,pb:2 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Typography variant="h6">Тип регистрации</Typography>
       <Tabs value={value} onChange={handleTabs} aria-label="Tabs">
-        <Tab component={Link} to={`${url}/group`} value="one" label="МП Группа" />
-        <Tab component={Link} to={`${url}/blocks`} value="two" label="МП" />
+        {/* <Tab component={Link} to={`${url}/group`} value="one" label="Группа МП" /> */}
+        <Tab component={Link} to={`${url}/slides`} value="two" label="МП" />
       </Tabs>
-
-      
+      <Box pt={1}>
+        <Switch>
+          <Route path={`${url}/group`}>
+            <FormSlides />
+          </Route>
+          <Route path={`${url}/slides`}>
+            <FormSlides />
+          </Route>
+        </Switch>
+      </Box>
     </Box>
   );
 }
 
-export default SlideRegistry
+export default SlideRegistry;

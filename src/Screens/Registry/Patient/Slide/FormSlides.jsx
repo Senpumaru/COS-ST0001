@@ -6,23 +6,7 @@ import moment from "moment";
 import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { alpha, styled } from "@mui/material/styles";
-
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
+import SpecTextField from "../../../../Components/SpecTextField";
 
 export const FormSlides = () => {
   /*** React Hook Form ***/
@@ -55,8 +39,7 @@ export const FormSlides = () => {
   }
 
   return (
-    <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
-      
+    <Grid container pt={1} direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
       {fields.map((item, index) => {
         return (
           <Grid key={item.id} container spacing={1} item md={12} sm={12} xs={12}>
@@ -199,12 +182,13 @@ export const FormSlides = () => {
           </Grid>
         );
       })}
-      <Grid container spacing={2}>
+      <Grid container p={1} spacing={2}>
         <Grid item md={6}>
           <Button
-            variant="outlined"
+            color="secondary"
+            variant="contained"
             onClick={() => {
-              reset();
+              reset({ ...getValues(), slideCodes: [] });
             }}
           >
             Сброс

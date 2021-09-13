@@ -7,23 +7,7 @@ import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { alpha, styled } from "@mui/material/styles";
 import { Alert } from "@mui/material";
-
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
+import SpecTextField from "../../../../Components/SpecTextField";
 
 export const FormSlideGroup = () => {
   /*** React Hook Form ***/
@@ -132,7 +116,7 @@ export const FormSlideGroup = () => {
       <Grid item md={12} sm={12} xs={12}>
         <Controller
           control={control}
-          name="organ"
+          name="slideOrgan"
           // rules={{ required: "Обязательное поле" }}
           render={({ field }) => (
             <SpecTextField
@@ -141,8 +125,8 @@ export const FormSlideGroup = () => {
               id="Organ-SpecTextField"
               label="Орган"
               color="secondary"
-              error={errors.organ ? true : false}
-              helperText={errors?.organ && errors.organ.message}
+              error={errors.slideOrgan ? true : false}
+              helperText={errors?.slideOrgan && errors.slideOrgan.message}
             />
           )}
         />
@@ -353,7 +337,14 @@ export const FormSlideGroup = () => {
             color="secondary"
             variant="contained"
             onClick={() => {
-              reset();
+              reset({
+                ...getValues(),
+                slideGroupOrgan: "",
+                slideGroupDepartment: "",
+                slideGroupCode: "",
+                slideGroupCount: "",
+                slideCodes: [],
+              });
             }}
           >
             Сброс

@@ -25,12 +25,12 @@ function union(a, b) {
 
 export default function BlockTransfer(props) {
   const { data } = props;
-  console.log(data);
+  
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState(data["blocks"].map(a => a.code));
   const [right, setRight] = useState([]);
 
-  console.log(left);
+  
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);

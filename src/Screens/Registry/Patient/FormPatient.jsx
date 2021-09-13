@@ -1,3 +1,4 @@
+
 import { Grid, MenuItem, Switch, TextField, Typography } from "@material-ui/core";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
@@ -5,6 +6,7 @@ import ruLocale from "date-fns/locale/ru";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { alpha, styled } from "@mui/material/styles";
+import SpecTextField from "../../../Components/SpecTextField";
 
 const GENDER = [
   {
@@ -17,22 +19,6 @@ const GENDER = [
   },
 ];
 
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
 
 function FormPatient() {
   const {
@@ -132,7 +118,7 @@ function FormPatient() {
               id="Orginization-TextField"
               label="Организация"
               error={errors.orginization ? true : false}
-              helperText={errors?.orginization && errors.orginization.message}
+              helperText={errors?.orginization ? errors.orginization.message : "Отделение указывается только для РНПЦ ОМР им.Александрова"}
             />
           )}
         />
@@ -149,7 +135,7 @@ function FormPatient() {
                 id="Department-TextField"
                 label="Отделение"
                 error={errors.department ? true : false}
-                helperText={errors?.department ? errors.department.message : "Отделение указывается только для РНПЦ ОМР им.Александрова"}
+                helperText={errors?.department && errors.department.message}
               />
             )}
           />

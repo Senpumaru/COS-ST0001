@@ -1,37 +1,12 @@
-import {
-  Autocomplete,
-  Checkbox,
-  CircularProgress,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import { CheckBoxOutlineBlank, CheckBoxOutlined } from "@material-ui/icons";
-import React, { useEffect } from "react";
-import { useState, useCallback } from "react";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Autocomplete, Checkbox, CircularProgress, Grid, ListItem, TextField, Typography } from "@material-ui/core";
+import { styled } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import patientSlice, { fetchPatients } from "../../Store/Slices/patientSlice";
-import { alpha, styled } from "@mui/material/styles";
+import { fetchPatients } from "../../Store/Slices/patientSlice";
+import SpecTextField from "../SpecTextField";
 
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
 
 // Hook
 function useDebounce(value, delay) {
@@ -55,10 +30,10 @@ function useDebounce(value, delay) {
   return debouncedValue;
 }
 
-function PatientAuto(props) {
-  const patientsState = useSelector((state) => state.Patients);
+function PatientSearch() {
+  const patientListState = useSelector((state) => state.Patients.List);
+  
   const [inputValue, setInputValue] = useState("");
-
   const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(inputValue, 2000);
 
@@ -77,6 +52,7 @@ function PatientAuto(props) {
     <Autocomplete
       fullWidth
       id="PatientSearch-id"
+      name="Patient"
       onChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
@@ -84,12 +60,12 @@ function PatientAuto(props) {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      getOptionLabel={(option) => option.first_name + " " + option.last_name + " " + option.middle_name}
+      getOptionLabel={(option) => option.last_name + " " + option.first_name + " " +  option.middle_name}
       renderOption={(props, option, { selected }) => (
         <ListItem {...props}>
           <Checkbox
-            icon={<CheckBoxOutlineBlank fontSize="small" />}
-            checkedIcon={<CheckBoxOutlined fontSize="small" />}
+            icon={<FontAwesomeIcon icon={faUser}/>}
+            checkedIcon={<FontAwesomeIcon icon={faUser}/>}
             style={{ marginRight: 8 }}
             checked={selected}
           />
@@ -108,8 +84,8 @@ function PatientAuto(props) {
         </ListItem>
       )}
       // renderOption
-      options={patientsState["List"]}
-      loading={patientsState["Loading"]}
+      options={patientListState["Data"]}
+      loading={patientListState["Loading"]}
       renderInput={(params) => (
         <SpecTextField
           {...params}
@@ -117,7 +93,7 @@ function PatientAuto(props) {
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
-                {patientsState["Loading"] ? <CircularProgress color="inherit" size={20} /> : null}
+                {patientListState["Loading"] ? <CircularProgress color="inherit" size={20} /> : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
             ),
@@ -129,4 +105,4 @@ function PatientAuto(props) {
   );
 }
 
-export default PatientAuto;
+export default PatientSearch;

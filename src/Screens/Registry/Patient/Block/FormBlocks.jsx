@@ -7,23 +7,7 @@ import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { alpha, styled } from "@mui/material/styles";
 import { Alert } from "@mui/material";
-
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
+import SpecTextField from "../../../../Components/SpecTextField";
 
 export const FormBlocks = () => {
   /*** React Hook Form ***/
@@ -43,7 +27,6 @@ export const FormBlocks = () => {
 
   /* React Hook Form - Watch*/
   const watchCodes = watch("blockCodes");
-  
 
   /*** Functions ***/
 
@@ -210,7 +193,7 @@ export const FormBlocks = () => {
             color="secondary"
             variant="contained"
             onClick={() => {
-              reset();
+              reset({...getValues(), blockCodes: [] });
             }}
           >
             Сброс

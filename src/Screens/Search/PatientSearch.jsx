@@ -1,30 +1,24 @@
+import { faEdit, faUserMd } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Avatar,
   Card,
   CardHeader,
   Divider,
-  Icon,
   IconButton,
   List,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
-  Paper,
   Typography,
 } from "@material-ui/core";
-import { Edit, Home, MoreVert } from "@material-ui/icons";
-import { faUserMd, faMailBulk, faEdit, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { MoreVert } from "@material-ui/icons";
 import { Box } from "@material-ui/system";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
-import PatientAuto from "../../Components/Fields/PatientAutocomplete";
-import PatientRegistry from "../Registry/Patient/PatientRegistry";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { makeStyles } from "@material-ui/styles";
-
-
+import { Link, useRouteMatch, Route } from "react-router-dom";
+import PatientAutocomplete from "../../Components/Fields/PatientAutocomplete";
 
 function PatientCard(props) {
   const { personData } = props;
@@ -71,7 +65,7 @@ function PatientCard(props) {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem>
+                <MenuItem component={Link} to={{ pathname: `${url}/${personData.uuid}/edit`, state: `${personData.uuid}` }}>
                   <ListItemIcon>
                     <FontAwesomeIcon icon={faEdit} />
                   </ListItemIcon>
@@ -100,8 +94,8 @@ function PatientCard(props) {
   );
 }
 
-function Database() {
-  const patientsState = useSelector((state) => state.Patients);
+function PatientDatabase() {
+  const patientsState = useSelector((state) => state.Patients.List);
 
   return (
     <React.Fragment>
@@ -118,10 +112,10 @@ function Database() {
       </Box>
       <Typography variant="h5">Поиск пациента</Typography>
       <Box pt={1}>
-      <PatientAuto />
+        <PatientAutocomplete />
       </Box>
       <List>
-        {patientsState["List"].map((person) => (
+        {patientsState["Data"].map((person) => (
           <PatientCard personData={person} key={person.uuid} />
         ))}
       </List>
@@ -129,4 +123,4 @@ function Database() {
   );
 }
 
-export default Database;
+export default PatientDatabase;

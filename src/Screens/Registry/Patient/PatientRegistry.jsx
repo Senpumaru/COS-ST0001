@@ -1,35 +1,26 @@
+import { Alert, Divider, Grid } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import Stepper from "@material-ui/core/Stepper";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-
-import Button from "@material-ui/core/Button";
+import Stepper from "@material-ui/core/Stepper";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
-import { useState } from "react";
-import FormPatient from "./FormPatient";
-import { makeStyles } from "@material-ui/styles";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { useEffect } from "react";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import FormBlockChoice from "./FormBlockChoice";
-import Outcome from "./Outcome";
-import { Alert, Collapse, Grid, IconButton, Paper, Fade, Snackbar, Divider } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  createPatient,
-  CreateReset,
-  createStep,
-  initialState,
-  resetPatients,
-} from "../../../Store/Slices/patientSlice";
+import { Collapse, Fade } from "@mui/material";
 import moment from "moment";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import CloseIcon from "@material-ui/icons/Close";
-import AlertMod from "../../../Components/AlertMod";
-import FormSlide from "./Slide/FormSlides";
+import React, { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { createPatient, createStep, resetPatients } from "../../../Store/Slices/patientSlice";
+import FormBlockChoice from "./FormBlockChoice";
+import FormPatient from "./FormPatient";
 import FormSlideChoice from "./FormSlideChoice";
+import Outcome from "./Outcome";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { CreateReset } from "../../../Store/Slices/patientSlice";
+import SpecTextField from "../../../Components/SpecTextField";
+
 
 // Steps (Forms)
 function getStepContent(step) {
@@ -55,7 +46,7 @@ function PatientRegistry() {
   /* Redux Toolkit */
   const dispatch = useDispatch();
 
-  const Patients = useSelector((state) => state.Patients);
+  const PatientState = useSelector((state) => state.Patients.Create);
 
   /** Stepper ***/
   const steps = ["Личные данные", "Присвоить Блоки", "Присвоить МП", "Итог"];
@@ -107,7 +98,7 @@ function PatientRegistry() {
   };
   // Reset
   const handleReset = () => {
-    if (Patients.Success) {
+    if (PatientState.Success) {
       reset();
     }
     setActiveStep(0);
@@ -140,38 +131,43 @@ function PatientRegistry() {
   /*** React Hook Form ***/
   /* React Hook Form - Defaults */
   const defaultValues = {
-    ambulatoryNumber: Patients.Create.ambulatoryNumber,
+    ambulatoryNumber: PatientState.Data.ambulatoryNumber,
     orginization: "РНПЦ ОМР им.Александрова",
-    department: Patients.Create.department,
-    gender: Patients.Create.gender,
-    firstName: Patients.Create.firstName,
-    middleName: Patients.Create.middleName,
-    lastName: Patients.Create.lastName,
-    country: Patients.Create.country,
-    city: Patients.Create.city,
-    street: Patients.Create.street,
-    house: Patients.Create.house,
-    flat: Patients.Create.flat,
-    dateBirth: Patients.Create.dateBirth,
+    department: PatientState.Data.department,
+    gender: PatientState.Data.gender,
+    firstName: PatientState.Data.firstName,
+    middleName: PatientState.Data.middleName,
+    lastName: PatientState.Data.lastName,
+    country: PatientState.Data.country,
+    city: PatientState.Data.city,
+    street: PatientState.Data.street,
+    house: PatientState.Data.house,
+    flat: PatientState.Data.flat,
+    dateBirth: PatientState.Data.dateBirth,
+    blockGroupOrgan: "",
+    blockGroupDepartment: "",
     blockGroupCode: "",
     blockGroupCount: "",
-    blockCodes: Patients.Create.blockCodes,
+    blockCodes: [],
     slideGroupCode: "",
     slideGroupCount: "",
-    slideCodes: Patients.Create.slideCodes,
+    slideCodes: [],
   };
 
   /* React Hook Form - Submit */
   const onSubmit = (data) => {
     handleNext();
-    console.log(data);
     // Data Modification
     data["dateBirth"] = moment(data["dateBirth"]).format("YYYY-MM-DD");
     data["blockGroupYear"] = moment(data["blockGroupYear"]).format("YYYY-MM-DD");
     data["slideGroupYear"] = moment(data["slideGroupYear"]).format("YYYY-MM-DD");
-    console.log(data);
+    
     // React Hook Form Data Dispatch
     dispatch(createPatient(data));
+    if (PatientState.Success) {
+      reset();
+    }
+    // Alert Set
     setOpenAlert(true);
   };
 
@@ -183,6 +179,8 @@ function PatientRegistry() {
   });
 
   const { register, handleSubmit, watch, setValue, formState, getValues, reset, trigger } = methods;
+
+  
 
   /*** Alert ***/
   const [openAlert, setOpenAlert] = useState(false);
@@ -213,7 +211,7 @@ function PatientRegistry() {
         </Grid>
         <Grid item xs={1}>
           <Box display="flex" justifyContent="center" alignItems="center">
-            {Patients.Loading && <CircularProgress size={30} thickness={4.8} color="secondary" />}
+            {PatientState.Loading && <CircularProgress size={30} thickness={4.8} color="secondary" />}
           </Box>
         </Grid>
       </Grid>
@@ -278,17 +276,59 @@ function PatientRegistry() {
         )}
       </Box>
 
+      {/* Errors */}
       <Box pt={2}>
-        {Patients.Error && (
-          <AlertMod open={openAlert} state={setOpenAlert} severity="error" text={Patients.Error}></AlertMod>
+        {PatientState.Error && (
+          <Fade timeout={1000} in={openAlert}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    dispatch(CreateReset());
+                    setOpenAlert(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              severity="error"
+              color="error"
+            >
+              {typeof PatientState.Error === "object" ? (
+                Object.entries(PatientState.Error).map(([key, value]) => {
+                  return <Typography key={key}>{PatientState.Error[key]}</Typography>;
+                })
+              ) : (
+                <Typography>{PatientState.Error}</Typography>
+              )}
+            </Alert>
+          </Fade>
         )}
-        {Patients.Success && (
-          <AlertMod
-            open={openAlert}
-            state={setOpenAlert}
-            severity="success"
-            text="Пациент и блоки успешно зарегестрированы."
-          ></AlertMod>
+
+        {PatientState.Success && (
+          <Fade timeout={2000} in={openAlert}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    dispatch(CreateReset());
+                    setOpenAlert(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              severity="success"
+            >
+              {PatientState.Success.success}
+            </Alert>
+          </Fade>
         )}
       </Box>
     </Box>

@@ -8,8 +8,8 @@ function Home() {
       <Box
         sx={{
           pl: 1,
-          borderLeft: "0.2rem solid #f57f17",
-          borderBottom: "0.2rem solid #f57f17",
+          borderLeft: "0.2rem solid #f9a825",
+          borderBottom: "0.2rem solid #f9a825",
           width: "20rem",
           flexGrow: 1,
         }}

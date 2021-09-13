@@ -8,20 +8,31 @@ import FormBlocks from './Block/FormBlocks';
 import FormBlockGroup from './Block/FormBlockGroup';
 import FormSlideGroup from './Slide/FormSlideGroup';
 import FormSlides from './Slide/FormSlides';
+import { useFormContext } from 'react-hook-form';
 
 export const FormSlideChoice = () => {
-  const [value, setValue] = React.useState('1');
+  /*** React Hook Form ***/
+  const {
+    control,
+    watch,
+    formState: { errors },
+    reset,
+    getValues,
+    setValue,
+  } = useFormContext();
+
+  const [tab, setTab] = React.useState("1");
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   return (
-    <TabContext value={value}>
+    <TabContext value={tab}>
     <Box  >
       <TabList onChange={handleChange} aria-label="lab API tabs example">
-        <Tab label="Группа МП" value="1" />
-        <Tab label="МП" value="2" />
+      {getValues("slideCodes").length >= 1 ? null : <Tab label="Группа МП" value="1" />}
+          {getValues("slideGroupCode") ? null : <Tab label="МП" value="2" />}
       </TabList>
     </Box>
     <TabPanel sx={{p: 0}} value="1"><FormSlideGroup/></TabPanel>

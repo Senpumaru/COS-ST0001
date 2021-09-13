@@ -7,7 +7,7 @@ import { createPatient } from "../../../Store/Slices/patientSlice";
 
 export const Outcome = () => {
   const { getValues } = useFormContext();
-  console.log(getValues());
+  
 
   return (
     <React.Fragment>

@@ -7,23 +7,8 @@ import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { alpha, styled } from "@mui/material/styles";
 import { Alert } from "@mui/material";
+import SpecTextField from "../../../../Components/SpecTextField";
 
-const SpecTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#f57f17",
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#f57f17",
-  },
-  "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
-      borderColor: "#263238",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#f57f17",
-    },
-  },
-});
 
 export const FormBlockGroup = () => {
   /*** React Hook Form ***/
@@ -132,7 +117,7 @@ export const FormBlockGroup = () => {
       <Grid item md={12} sm={12} xs={12}>
         <Controller
           control={control}
-          name="blockOrgan"
+          name="blockGroupOrgan"
           // rules={{ required: "Обязательное поле" }}
           render={({ field }) => (
             <SpecTextField
@@ -141,8 +126,8 @@ export const FormBlockGroup = () => {
               id="Organ-SpecTextField"
               label="Орган"
               color="secondary"
-              error={errors.blockOrgan ? true : false}
-              helperText={errors?.blockOrgan && errors.blockOrgan.message}
+              error={errors.blockGroupOrgan ? true : false}
+              helperText={errors?.blockGroupOrgan && errors.blockGroupOrgan.message}
             />
           )}
         />
@@ -150,7 +135,7 @@ export const FormBlockGroup = () => {
       <Grid item md={12} sm={12} xs={12}>
         <Controller
           control={control}
-          name="blockDepartment"
+          name="blockGroupDepartment"
           // rules={{ required: "Обязательное поле" }}
           render={({ field }) => (
             <SpecTextField
@@ -159,8 +144,8 @@ export const FormBlockGroup = () => {
               id="Department-SpecTextField"
               label="Отделение"
               color="secondary"
-              error={errors.department ? true : false}
-              helperText={errors?.department && errors.department.message}
+              error={errors.blockGroupDepartment ? true : false}
+              helperText={errors?.blockGroupDepartment && errors.blockGroupDepartment.message}
             />
           )}
         />
@@ -265,9 +250,7 @@ export const FormBlockGroup = () => {
         />
       </Grid>
       <Grid item md={12} sm={12} xs={12}>
-        <Alert severity="info">
-          При создании блоков будут созданы соответсвующие "виртуальные слайды"
-        </Alert>
+        <Alert severity="info">При создании блоков будут созданы соответсвующие "виртуальные слайды"</Alert>
       </Grid>
       {fields.map((item, index) => {
         return (
@@ -357,7 +340,14 @@ export const FormBlockGroup = () => {
             color="secondary"
             variant="contained"
             onClick={() => {
-              reset();
+              reset({
+                ...getValues(),
+                blockGroupOrgan: "",
+                blockGroupDepartment: "",
+                blockGroupCode: "",
+                blockGroupCount: "",
+                blockCodes: [],
+              });
             }}
           >
             Сброс

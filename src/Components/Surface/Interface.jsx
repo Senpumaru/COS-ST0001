@@ -2,7 +2,7 @@ import { alpha } from "@material-ui/system";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
-import { InputBase } from "@mui/material";
+import { Drawer, InputBase, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -14,12 +14,16 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Route, Switch } from "react-router";
 import Home from "../../Screens/Home";
-import Login from "../../Screens/Login";
+import Login from "../../Screens/Credentials/Login";
 import PersonalData from "../../Screens/Patient/PersonalData";
 import Registry from "../../Screens/Registry/Registry";
-import Database from "../../Screens/Search/PatientSearch";
+import PatientDatabase from "../../Screens/Search/PatientSearch";
 import Sidebar from "./Navigation/Sidebar";
 import SearchIcon from "@mui/icons-material/Search";
+import { Button, Container, List, ListItem } from "@material-ui/core";
+import { faEdit, faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PatientUpdate from "../../Screens/Patient/Update/PatientUpdate";
 
 const drawerWidth = 220;
 
@@ -73,7 +77,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
+const DrawerShrink = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
@@ -131,6 +135,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function Interface(props) {
   const theme = useTheme();
+
+  /*** Drawer - Panel ***/
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -139,6 +145,17 @@ function Interface(props) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  /*** Drawer - History ***/
+  const [history, setHistory] = React.useState(false);
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+      return;
+    }
+
+    setHistory(open);
   };
 
   return (
@@ -151,7 +168,6 @@ function Interface(props) {
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              
               marginRight: "36px",
               ...(open && { display: "none" }),
             }}
@@ -167,9 +183,20 @@ function Interface(props) {
             </SearchIconWrapper>
             <StyledInputBase placeholder="Поиск..." inputProps={{ "aria-label": "search" }} />
           </SearchPanel>
+          <Button
+            sx={{
+              fontSize: 30,
+              paddingLeft: "0.05rem",
+              color: "success.main",
+            }}
+            onClick={toggleDrawer(true)}
+            color="secondary"
+          >
+            <FontAwesomeIcon icon={faHistory} />
+          </Button>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <DrawerShrink variant="permanent" open={open}>
         <DrawerHeader>
           <Typography variant="h4">Панель</Typography>
           <IconButton onClick={handleDrawerClose}>
@@ -178,11 +205,23 @@ function Interface(props) {
         </DrawerHeader>
         <Divider />
         <Sidebar />
+      </DrawerShrink>
+
+      <Drawer anchor="right" open={history} onClose={toggleDrawer(false)}>
+        <Box p={2} sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+          <Toolbar />
+          <Typography variant="h4">История</Typography>
+          <List>
+            {["Опыт 1", "Опыт 2", "Опыт 3", "Опыт 4"].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       </Drawer>
 
-     
-
-      <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
+      <Container maxWidth={false} component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Toolbar />
         <Switch>
           <Route exact path="/">
@@ -192,16 +231,24 @@ function Interface(props) {
             <Login />
           </Route>
           <Route exact path="/search">
-            <Database />
+            <PatientDatabase />
           </Route>
           <Route exact path="/search/:uuid">
             <PersonalData />
+          </Route>
+          <Route exact path="/search/:uuid/edit">
+            <PatientUpdate />
           </Route>
           <Route path="/registry">
             <Registry />
           </Route>
         </Switch>
-      </Box>
+        <Box>
+          <Typography variant="h6" color="inherit">
+            © 2021 Artstein
+          </Typography>
+        </Box>
+      </Container>
     </Box>
   );
 }
