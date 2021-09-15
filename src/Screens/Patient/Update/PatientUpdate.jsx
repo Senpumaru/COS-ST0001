@@ -17,7 +17,7 @@ import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import ruLocale from "date-fns/locale/ru";
 import SpecTextField from "../../../Components/SpecTextField";
 
-const BASE_URL = "http://localhost/api/ST0001";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 const GENDER = [
   {

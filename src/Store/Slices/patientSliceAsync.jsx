@@ -2,16 +2,16 @@ import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 
-const BASE_URL = "http://localhost/api/ST0001";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 export const GetPatients = createAsyncThunk(
   "patient/getPatients",
-  async () => await axios.get(`${BASE_URL}/patients/`)
+  async () => await axios.get(`${SERVER_URL}/patients/`)
 );
 
 export const CreatePatient = createAsyncThunk(
   "patient/createPost",
-  async (post) => await axios.post(`${BASE_URL}/patients/create`, post)
+  async (post) => await axios.post(`${SERVER_URL}/patients/create`, post)
 );
 
 

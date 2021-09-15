@@ -31,14 +31,14 @@ import { Link } from "react-router-dom";
 import BlockDialog from "../../Components/Dialogs/BlockDialog";
 import BlockTransfer from "./Tabs/BlockTransfer";
 
-const BASE_URL = "http://localhost/api/ST0001";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 function usePatient() {
   let { path, url } = useRouteMatch();
   const lastSegment = url.split("/").pop();
 
   return useQuery("patient", async () => {
-    const { data } = await axios.get(`${BASE_URL}/patients/${lastSegment}`);
+    const { data } = await axios.get(`${SERVER_URL}api/ST0001/patients/${lastSegment}`);
 
     return data;
   });

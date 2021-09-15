@@ -6,7 +6,7 @@ import { List, ListItem, Toolbar, Typography } from "@material-ui/core";
 import { ListItemText } from "@mui/material";
 import { Box } from "@material-ui/system";
 
-const BASE_URL = "http://localhost/api/ST0001/patient/history/";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 function History() {
   // Dialog
@@ -24,7 +24,7 @@ function History() {
   const { status, data, error, isFetching } = useQuery(
     "history",
     async () => {
-      const res = await axios.get(BASE_URL);
+      const res = await axios.get(SERVER_URL + "/api/ST0001/patient/history/");
       return res.data;
     },
     {

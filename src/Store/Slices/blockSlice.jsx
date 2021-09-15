@@ -125,7 +125,7 @@ export default blockSlice.reducer;
 
 /* Actions */
 
-const SERVER_URL = "http://localhost/api/ST0001/";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 // Blocks
 
@@ -136,7 +136,7 @@ export const resetBlocks = () => async (dispatch) => {
 export const fetchBlocks = (search) => async (dispatch) => {
   dispatch(ListLoading());
   try {
-    await axios.get(SERVER_URL + `blocks?search=${search}`).then((response) => {
+    await axios.get(SERVER_URL + `api/ST0001/blocks?search=${search}`).then((response) => {
       setTimeout(() => {
         dispatch(ListFetch(response.data));
       }, 2000);
@@ -157,7 +157,7 @@ export const createBlocks = (instance) => async (dispatch) => {
   dispatch(CreateLoading());
   try {
     // Success
-    const { data } = await axios.post(SERVER_URL + "blocks/create/", instance);
+    const { data } = await axios.post(SERVER_URL + "api/ST0001/blocks/create/", instance);
     setTimeout(() => {
       dispatch(CreateSuccess(data));
     }, 3000);
@@ -176,7 +176,7 @@ export const detailBlock = (uuid) => async (dispatch) => {
   dispatch(DetailsLoading());
   try {
     // Success
-    const { data } = await axios.get(SERVER_URL + `blocks/${uuid}/`);
+    const { data } = await axios.get(SERVER_URL + `api/ST0001/blocks/${uuid}/`);
     setTimeout(() => {
       dispatch(DetailsSuccess(data));
     }, 3000);
@@ -195,7 +195,7 @@ export const updateBlock = (instance) => async (dispatch) => {
   dispatch(UpdateLoading());
   try {
     // Success
-    const { data } = await axios.put(SERVER_URL + `blocks/${instance["uuid"]}/update/`, instance);
+    const { data } = await axios.put(SERVER_URL + `api/ST0001/blocks/${instance["uuid"]}/update/`, instance);
     setTimeout(() => {
       dispatch(UpdateSuccess(data));
     }, 1000);

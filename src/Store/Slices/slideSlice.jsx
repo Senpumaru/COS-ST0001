@@ -123,7 +123,7 @@ export default slideSlice.reducer;
 
 /* Actions */
 
-const SERVER_URL = "http://localhost/api/ST0001/";
+const SERVER_URL = process.env.REACT_APP_API_SERVER;
 
 // Slides
 
@@ -134,7 +134,7 @@ export const resetSlides = () => async (dispatch) => {
 export const fetchSlides = (search) => async (dispatch) => {
   dispatch(ListLoading());
   try {
-    await axios.get(SERVER_URL + `slide?search=${search}`).then((response) => {
+    await axios.get(SERVER_URL + `api/ST0001/slide?search=${search}`).then((response) => {
       setTimeout(() => {
         dispatch(ListFetch(response.data));
       }, 2000);
@@ -155,7 +155,7 @@ export const createSlides = (instance) => async (dispatch) => {
   dispatch(CreateLoading());
   try {
     // Success
-    const { data } = await axios.post(SERVER_URL + "slides/create/", instance);
+    const { data } = await axios.post(SERVER_URL + "api/ST0001/slides/create/", instance);
     setTimeout(() => {
       dispatch(CreateSuccess(data));
     }, 3000);
@@ -174,7 +174,7 @@ export const detailSlide = (uuid) => async (dispatch) => {
   dispatch(DetailsLoading());
   try {
     // Success
-    const { data } = await axios.get(SERVER_URL + `slides/${uuid}/`);
+    const { data } = await axios.get(SERVER_URL + `api/ST0001/slides/${uuid}/`);
     setTimeout(() => {
       dispatch(DetailsSuccess(data));
     }, 3000);
@@ -193,7 +193,7 @@ export const updateSlide = (instance) => async (dispatch) => {
   dispatch(UpdateLoading());
   try {
     // Success
-    const { data } = await axios.put(SERVER_URL + `slides/${instance["uuid"]}/update/`, instance);
+    const { data } = await axios.put(SERVER_URL + `api/ST0001/slides/${instance["uuid"]}/update/`, instance);
     setTimeout(() => {
       dispatch(UpdateSuccess(data));
     }, 1000);
