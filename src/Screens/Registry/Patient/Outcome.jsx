@@ -12,15 +12,15 @@ export const Outcome = () => {
   return (
     <React.Fragment>
       <Typography>Итоговые данные</Typography>
-      <Paper elevation={12}>
-        <Box p={2} m={1}>
-          <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
+      <Paper elevation={8}>
+        <Box p={1} m={1}>
+          <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={0}>
             <Grid item md={12} sm={12} xs={12}>
               <Box
                 sx={{
                   pl: 1,
                   borderLeft: "0.2rem solid #f57f17",
-                  borderTop: "0.2rem solid #f57f17",
+                  borderBottom: "0.2rem solid #f57f17",
 
                   flexGrow: 1,
                 }}

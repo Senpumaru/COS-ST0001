@@ -16,6 +16,7 @@ function Home() {
       >
         <Typography variant="h2">Главное меню</Typography>
       </Box>
+        <a href="http://localhost/api/account/Menu/">Список приложений</a>
     </div>
   );
 }

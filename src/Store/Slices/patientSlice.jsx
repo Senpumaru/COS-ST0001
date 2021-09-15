@@ -4,7 +4,7 @@ import axios from "axios";
 // State
 
 export const initialState = {
-  List: { Data: [], Loading: false, Success: false, Error: false },
+  List: { Data: [""], Loading: false, Success: false, Error: false },
   Create: {
     Loading: false,
     Success: false,
@@ -42,6 +42,7 @@ const patientSlice = createSlice({
       state.List.Data = action.payload;
       state.List.Loading = false;
       state.List.Error = false;
+      state.List.Success = true;
     },
     ListLoading: (state, action) => {
       state.List.Loading = true;
@@ -68,6 +69,7 @@ const patientSlice = createSlice({
       state.Create.Success = false;
     },
     CreateReset: (state, action) => {
+      state.Create.Data = initialState.Create.Data;
       state.Create.Loading = false;
       state.Create.Error = false;
       state.Create.Success = false;
@@ -138,7 +140,7 @@ export default patientSlice.reducer;
 
 /* Actions */
 
-const SERVER_URL = "http://localhost/api/ST0001/";
+const SERVER_URL = "http://localhost/api/";
 
 // Patients
 
@@ -149,7 +151,7 @@ export const resetPatients = () => async (dispatch) => {
 export const fetchPatients = (search) => async (dispatch) => {
   dispatch(ListLoading());
   try {
-    await axios.get(SERVER_URL + `patients?search=${search}`).then((response) => {
+    await axios.get(SERVER_URL + `ST0001/patients?search=${search}`).then((response) => {
       setTimeout(() => {
         dispatch(ListFetch(response.data));
       }, 2000);
@@ -170,7 +172,7 @@ export const createPatient = (instance) => async (dispatch) => {
   dispatch(CreateLoading());
   try {
     // Success
-    const { data } = await axios.post(SERVER_URL + "patients/create/", instance);
+    const { data } = await axios.post(SERVER_URL + "ST0001/patients/create/", instance);
     setTimeout(() => {
       dispatch(CreateSuccess(data));
     }, 3000);
@@ -189,7 +191,7 @@ export const detailPatient = (uuid) => async (dispatch) => {
   dispatch(DetailsLoading());
   try {
     // Success
-    const { data } = await axios.get(SERVER_URL + `patients/${uuid}/`);
+    const { data } = await axios.get(SERVER_URL + `ST0001/patients/${uuid}/`);
     setTimeout(() => {
       dispatch(DetailsSuccess(data));
     }, 3000);
@@ -208,7 +210,7 @@ export const updatePatient = (instance) => async (dispatch) => {
   dispatch(UpdateLoading());
   try {
     // Success
-    const { data } = await axios.put(SERVER_URL + `patients/${instance["uuid"]}/update/`, instance);
+    const { data } = await axios.put(SERVER_URL + `ST0001/patients/${instance["uuid"]}/update/`, instance);
     setTimeout(() => {
       dispatch(UpdateSuccess(data));
     }, 1000);

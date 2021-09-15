@@ -211,7 +211,7 @@ function PatientRegistry() {
         </Grid>
         <Grid item xs={1}>
           <Box display="flex" justifyContent="center" alignItems="center">
-            {PatientState.Loading && <CircularProgress size={30} thickness={4.8} color="secondary" />}
+            {PatientState.Loading && <CircularProgress size={30} thickness={3.2} color="secondary" />}
           </Box>
         </Grid>
       </Grid>
@@ -248,8 +248,8 @@ function PatientRegistry() {
                     color="secondary"
                     variant="contained"
                     onClick={() => {
-                      dispatch(resetPatients());
                       reset();
+                      dispatch(resetPatients());
                       setActiveStep(0);
                     }}
                   >
@@ -309,7 +309,7 @@ function PatientRegistry() {
         )}
 
         {PatientState.Success && (
-          <Fade timeout={2000} in={openAlert}>
+          <Fade timeout={500} in={openAlert}>
             <Alert
               action={
                 <IconButton
@@ -317,7 +317,6 @@ function PatientRegistry() {
                   color="inherit"
                   size="small"
                   onClick={() => {
-                    dispatch(CreateReset());
                     setOpenAlert(false);
                   }}
                 >

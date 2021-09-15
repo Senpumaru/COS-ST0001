@@ -136,7 +136,7 @@ export const resetBlocks = () => async (dispatch) => {
 export const fetchBlocks = (search) => async (dispatch) => {
   dispatch(ListLoading());
   try {
-    await axios.get(SERVER_URL + `block?search=${search}`).then((response) => {
+    await axios.get(SERVER_URL + `blocks?search=${search}`).then((response) => {
       setTimeout(() => {
         dispatch(ListFetch(response.data));
       }, 2000);

@@ -28,7 +28,7 @@ function Sidebar() {
         <ListItemText primary="Главное меню" />
       </ListItem>
       <Divider />
-      <ListItem button component={Link} to="/search">
+      <ListItem button component={Link} to="/search/patient">
         <ListItemIcon
           sx={{
             fontSize: 30,

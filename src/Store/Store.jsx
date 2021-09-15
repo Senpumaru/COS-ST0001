@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
-import blockSlice from './Slices/blockSlice';
+import blockSlice from './Slices/blockSlice.jsx';
 
 
 import patientSlice from "./Slices/patientSlice"

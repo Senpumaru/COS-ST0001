@@ -30,8 +30,6 @@ const GENDER = [
   },
 ];
 
-
-
 function PatientUpdate() {
   const history = useHistory();
   const uuid = history.location.state;
@@ -121,17 +119,17 @@ function PatientUpdate() {
         sx={{
           pl: 1,
           borderLeft: "0.2rem solid #f9a825",
-          borderBottom: "0.2rem solid #f9a825",
-          width: "30rem",
+          borderTop: "0.2rem solid #f9a825",
+          width: "20rem",
           flexGrow: 1,
         }}
       >
-        <Typography variant="h2">Обновлеие пациента</Typography>
+        <Typography variant="h4">Обновлеие пациента</Typography>
       </Box>
-      <Typography variant="h5">Личная информация</Typography>
+      <Typography variant="h6">Личная информация</Typography>
       {LoadingDetails || LoadingUpdate ? (
         <div style={{ paddingTop: 4, display: "flex", justifyContent: "center" }}>
-          <CircularProgress size={90} thickness={6.2} color="secondary" />
+          <CircularProgress size={90} thickness={3.2} color="secondary" />
         </div>
       ) : (
         <Box pt={1}>
@@ -302,9 +300,7 @@ function PatientUpdate() {
                 />
               </Grid>
               <Grid item md={12} sm={12} xs={12}>
-                <Typography pl={2} variant="h6">
-                  Адрес
-                </Typography>
+                <Typography variant="h6">Адрес</Typography>
               </Grid>
               <Grid item md={6} sm={6} xs={12}>
                 <Controller

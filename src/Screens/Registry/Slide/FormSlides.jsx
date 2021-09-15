@@ -256,7 +256,7 @@ function FormSlides() {
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSubmit(onSubmit)}>
                 <Typography pr={2}>Завершить</Typography>
-                {CreateSlides.Loading && <CircularProgress size={25} thickness={4.8} color="secondary" />}
+                {CreateSlides.Loading && <CircularProgress size={25} thickness={3.2} color="secondary" />}
               </Button>
             </Grid>
           </Grid>

@@ -1,11 +1,17 @@
 import { faEdit, faUserMd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
   Avatar,
   Card,
+  CardContent,
   CardHeader,
   CircularProgress,
   Divider,
+  Grid,
   IconButton,
   List,
   ListItemIcon,
@@ -19,15 +25,16 @@ import { Box } from "@material-ui/system";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link, useRouteMatch, Route } from "react-router-dom";
+import BlockSearchField from "../../Components/Fields/BlockSearchField";
 import PatientAutocomplete from "../../Components/Fields/PatientAutocomplete";
-import PatientSearchField from "../../Components/Fields/PatientSearchField";
 
-function PatientCard(props) {
-  const { personData } = props;
+function BlockCard(props) {
+  const { blockData } = props;
 
   let { path, url } = useRouteMatch();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -38,14 +45,9 @@ function PatientCard(props) {
 
   return (
     <Box pt={1}>
-      <Card key={personData.uuid}>
+      <Card key={blockData.uuid}>
         <CardHeader
-          avatar={
-            <Avatar>
-              {personData.last_name[0]}
-              {personData.first_name[0]}
-            </Avatar>
-          }
+          avatar={<Avatar></Avatar>}
           action={
             <React.Fragment>
               <IconButton
@@ -69,7 +71,7 @@ function PatientCard(props) {
               >
                 <MenuItem
                   component={Link}
-                  to={{ pathname: `${url}/${personData.uuid}/edit`, state: `${personData.uuid}` }}
+                  to={{ pathname: `${url}/${blockData.uuid}/edit`, state: `${blockData.uuid}` }}
                 >
                   <ListItemIcon>
                     <FontAwesomeIcon icon={faEdit} />
@@ -78,7 +80,7 @@ function PatientCard(props) {
                 </MenuItem>
                 <Divider />
 
-                <MenuItem component={Link} to={`${url}/${personData.uuid}`}>
+                <MenuItem component={Link} to={`${url}/${blockData.uuid}`}>
                   <ListItemIcon>
                     <FontAwesomeIcon icon={faUserMd} />
                   </ListItemIcon>
@@ -88,34 +90,67 @@ function PatientCard(props) {
             </React.Fragment>
           }
           title={
-            <Typography>
-              ФИО: {personData.last_name} {personData.first_name} {personData.middle_name}
-            </Typography>
+            <Box>
+              <Typography>
+                ФИО: {blockData.patient.last_name} {blockData.patient.first_name} {blockData.patient.middle_name}
+              </Typography>
+              <Typography>Амбуляторный ID:{blockData.patient.id_ambulatory}</Typography>
+            </Box>
           }
-          subheader={<Typography>Дата рождения: {personData.date_of_birth}</Typography>}
+          subheader={
+            blockData.block_group ? (
+              <Typography>Блок группа: {blockData.block_group}</Typography>
+            ) : (
+              <Alert sx={{ fontSize: 14, padding: 0, paddingLeft: 1 }} severity="info">
+                Блок группа отсутсвует
+              </Alert>
+            )
+          }
         ></CardHeader>
+        <CardContent>
+          <Box pl={2}>
+            <Grid container spacing={0}>
+              <Grid item xs={12}>
+                <MenuItem>Блок: {blockData.code}</MenuItem>
+              </Grid>
+              <Grid p={0} m={0} item xs={12}>
+                <Accordion sx={{}}>
+                  <AccordionSummary sx={{ fontSize:14, backgroundColor: "#f9a825" }}>Микропрепараты</AccordionSummary>
+                  <AccordionDetails sx={{ padding: 0 }}>
+                    <Grid item xs={4}>
+                      {blockData.slides.map((slide) => (
+                        <MenuItem key={slide.uuid}>{slide.code}</MenuItem>
+                      ))}
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            </Grid>
+          </Box>
+        </CardContent>
       </Card>
     </Box>
   );
 }
 
-function PatientSearch() {
-  const { Data, Loading, Error, Success } = useSelector((state) => state.Patients.List);
+function BlockSearch() {
+  const { Data, Loading, Error, Success } = useSelector((state) => state.Blocks.List);
+  console.log(Data);
 
   return (
     <React.Fragment>
-      <Typography variant="h5">Поиск пациента</Typography>
+      <Typography variant="h5">Поиск блоков</Typography>
       <Box pt={1}>
-        <PatientSearchField />
+        <BlockSearchField />
       </Box>
       {Loading ? (
         <div style={{ paddingTop: 4, display: "flex", justifyContent: "center" }}>
-          <CircularProgress size={60} thickness={3.2} color="secondary" />
+          <CircularProgress size={90} thickness={3.2} color="secondary" />
         </div>
       ) : (
         <List>
-          {Data.map((person) => (
-            <PatientCard personData={person} key={person.uuid} />
+          {Data.map((block) => (
+            <BlockCard blockData={block} key={block.uuid} />
           ))}
         </List>
       )}
@@ -123,4 +158,4 @@ function PatientSearch() {
   );
 }
 
-export default PatientSearch;
+export default BlockSearch;

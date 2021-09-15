@@ -4,36 +4,15 @@ import { Autocomplete, Checkbox, CircularProgress, Grid, ListItem, TextField, Ty
 import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import useDebounce from "../../Functions/useDebounce";
 import { fetchPatients } from "../../Store/Slices/patientSlice";
 import SpecTextField from "../SpecTextField";
 
-
-// Hook
-function useDebounce(value, delay) {
-  // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  useEffect(
-    () => {
-      // Update debounced value after delay
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-      // Cancel the timeout if value changes (also on delay change or unmount)
-      // This is how we prevent debounced value from updating if value is changed ...
-      // .. within the delay period. Timeout gets cleared and restarted.
-      return () => {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay] // Only re-call effect if value or delay changes
-  );
-  return debouncedValue;
-}
-
 function PatientSearch() {
   const patientListState = useSelector((state) => state.Patients.List);
-  
+  const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+
   const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(inputValue, 2000);
 
@@ -42,7 +21,7 @@ function PatientSearch() {
   useEffect(() => {
     if (debouncedSearchTerm) {
       setIsSearching(true);
-      dispatch(fetchPatients(debouncedSearchTerm));
+      dispatch(fetchPatients(inputValue));
     } else {
       setIsSearching(false);
     }
@@ -53,19 +32,20 @@ function PatientSearch() {
       fullWidth
       id="PatientSearch-id"
       name="Patient"
-      onChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
+      value={value}
+      onChange={(event, newValue) => {
+        setValue(newValue);
       }}
       inputValue={inputValue}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      getOptionLabel={(option) => option.last_name + " " + option.first_name + " " +  option.middle_name}
+      getOptionLabel={(option) => value != "" ? option.full_name + " " + option.id_ambulatory : ""}
       renderOption={(props, option, { selected }) => (
         <ListItem {...props}>
           <Checkbox
-            icon={<FontAwesomeIcon icon={faUser}/>}
-            checkedIcon={<FontAwesomeIcon icon={faUser}/>}
+            icon={<FontAwesomeIcon icon={faUser} />}
+            checkedIcon={<FontAwesomeIcon icon={faUser} />}
             style={{ marginRight: 8 }}
             checked={selected}
           />
@@ -89,6 +69,7 @@ function PatientSearch() {
       renderInput={(params) => (
         <SpecTextField
           {...params}
+          helperText="Параметры поиска: Амбуляторный номер, ФИО"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

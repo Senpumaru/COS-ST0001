@@ -17,13 +17,16 @@ import Home from "../../Screens/Home";
 import Login from "../../Screens/Credentials/Login";
 import PersonalData from "../../Screens/Patient/PersonalData";
 import Registry from "../../Screens/Registry/Registry";
-import PatientDatabase from "../../Screens/Search/PatientSearch";
+import PatientSearch from "../../Screens/Search/PatientSearch";
 import Sidebar from "./Navigation/Sidebar";
 import SearchIcon from "@mui/icons-material/Search";
-import { Button, Container, List, ListItem } from "@material-ui/core";
+import { Button, Container, List, ListItem, Paper } from "@material-ui/core";
 import { faEdit, faHistory } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PatientUpdate from "../../Screens/Patient/Update/PatientUpdate";
+import Search from "../../Screens/Search/Search";
+import Architecture from "../../Images/Architecture.png"
+import History from "../../Screens/SidePanel/History";
 
 const drawerWidth = 220;
 
@@ -160,7 +163,9 @@ function Interface(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
+      
       <AppBar position="fixed" open={open}>
+        
         <Toolbar>
           <IconButton
             color="inherit"
@@ -208,17 +213,7 @@ function Interface(props) {
       </DrawerShrink>
 
       <Drawer anchor="right" open={history} onClose={toggleDrawer(false)}>
-        <Box p={2} sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-          <Toolbar />
-          <Typography variant="h4">История</Typography>
-          <List>
-            {["Опыт 1", "Опыт 2", "Опыт 3", "Опыт 4"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+       <History/>
       </Drawer>
 
       <Container maxWidth={false} component="main" sx={{ flexGrow: 1, p: 2 }}>
@@ -230,15 +225,11 @@ function Interface(props) {
           <Route exact path="/login">
             <Login />
           </Route>
-          <Route exact path="/search">
-            <PatientDatabase />
+          <Route path="/search">
+            <Search />
           </Route>
-          <Route exact path="/search/:uuid">
-            <PersonalData />
-          </Route>
-          <Route exact path="/search/:uuid/edit">
-            <PatientUpdate />
-          </Route>
+          
+          
           <Route path="/registry">
             <Registry />
           </Route>

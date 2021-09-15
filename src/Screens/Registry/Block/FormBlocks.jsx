@@ -56,6 +56,8 @@ function FormBlocks() {
     trigger,
   } = methods;
 
+  console.log(getValues())
+
   // Array
   const { fields, append, remove } = useFieldArray({
     control,
@@ -258,7 +260,7 @@ function FormBlocks() {
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSubmit(onSubmit)}>
                 <Typography pr={2}>Завершить</Typography>
-                {CreateBlocks.Loading && <CircularProgress size={25} thickness={4.8} color="secondary" />}
+                {CreateBlocks.Loading && <CircularProgress size={25} thickness={3.2} color="secondary" />}
               </Button>
             </Grid>
           </Grid>
