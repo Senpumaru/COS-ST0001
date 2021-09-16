@@ -1,8 +1,12 @@
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Container } from "@material-ui/core";
 import { alpha } from "@material-ui/system";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Drawer, InputBase, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { Drawer, InputBase } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -13,25 +17,16 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Route, Switch } from "react-router";
-import Home from "../../Screens/Home";
 import Login from "../../Screens/Credentials/Login";
-import PersonalData from "../../Screens/Patient/PersonalData";
+import Home from "../../Screens/Home";
 import Registry from "../../Screens/Registry/Registry";
-import PatientSearch from "../../Screens/Search/PatientSearch";
-import Sidebar from "./Navigation/Sidebar";
-import SearchIcon from "@mui/icons-material/Search";
-import { Button, Container, List, ListItem, Paper } from "@material-ui/core";
-import { faEdit, faHistory } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PatientUpdate from "../../Screens/Patient/Update/PatientUpdate";
 import Search from "../../Screens/Search/Search";
-import Architecture from "../../Images/Architecture.png"
 import History from "../../Screens/SidePanel/History";
+import Sidebar from "./Navigation/Sidebar";
 
 const drawerWidth = 220;
 
 /*** AppBar / SideBar ***/
-
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -136,7 +131,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function Interface(props) {
+function Interface() {
   const theme = useTheme();
 
   /*** Drawer - Panel ***/
@@ -163,9 +158,7 @@ function Interface(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      
       <AppBar position="fixed" open={open}>
-        
         <Toolbar>
           <IconButton
             color="inherit"
@@ -180,7 +173,7 @@ function Interface(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h3" noWrap component="div">
-            COS Регистр
+            COS | Регистр
           </Typography>
           <SearchPanel>
             <SearchIconWrapper>
@@ -201,6 +194,7 @@ function Interface(props) {
           </Button>
         </Toolbar>
       </AppBar>
+
       <DrawerShrink variant="permanent" open={open}>
         <DrawerHeader>
           <Typography variant="h4">Панель</Typography>
@@ -213,7 +207,7 @@ function Interface(props) {
       </DrawerShrink>
 
       <Drawer anchor="right" open={history} onClose={toggleDrawer(false)}>
-       <History/>
+        <History />
       </Drawer>
 
       <Container maxWidth={false} component="main" sx={{ flexGrow: 1, p: 2 }}>
@@ -228,12 +222,12 @@ function Interface(props) {
           <Route path="/search">
             <Search />
           </Route>
-          
-          
+
           <Route path="/registry">
             <Registry />
           </Route>
         </Switch>
+
         <Box>
           <Typography variant="h6" color="inherit">
             © 2021 Artstein

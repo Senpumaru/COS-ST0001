@@ -8,6 +8,10 @@ const theme = createTheme(
         minHeight: 42,
       },
     },
+
+    background: {
+      default: "#ffffff",
+    },
     palette: {
       common: {},
       primary: {

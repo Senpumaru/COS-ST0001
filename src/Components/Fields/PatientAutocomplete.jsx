@@ -8,7 +8,7 @@ import useDebounce from "../../Functions/useDebounce";
 import { fetchPatients } from "../../Store/Slices/patientSlice";
 import SpecTextField from "../SpecTextField";
 
-function PatientSearch() {
+function PatientAutocomplete() {
   const patientListState = useSelector((state) => state.Patients.List);
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -42,7 +42,7 @@ function PatientSearch() {
       }}
       getOptionLabel={(option) => value != "" ? option.full_name + " " + option.id_ambulatory : ""}
       renderOption={(props, option, { selected }) => (
-        <ListItem {...props}>
+        <ListItem key={option.uuid} {...props}>
           <Checkbox
             icon={<FontAwesomeIcon icon={faUser} />}
             checkedIcon={<FontAwesomeIcon icon={faUser} />}
@@ -86,4 +86,4 @@ function PatientSearch() {
   );
 }
 
-export default PatientSearch;
+export default PatientAutocomplete;

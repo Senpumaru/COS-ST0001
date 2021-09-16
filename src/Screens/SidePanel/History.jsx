@@ -24,7 +24,7 @@ function History() {
   const { status, data, error, isFetching } = useQuery(
     "history",
     async () => {
-      const res = await axios.get(SERVER_URL + "/api/ST0001/patient/history/");
+      const res = await axios.get(SERVER_URL + "api/ST0001/patient/history/");
       return res.data;
     },
     {
@@ -40,7 +40,7 @@ function History() {
       <Toolbar />
       <Typography variant="h4">История</Typography>
       <List>
-        {data.map((patient, index) => (
+        {data?.map((patient, index) => (
           <ListItem button key={patient["uuid"]}>
             <ListItemText primary={patient["id_ambulatory"]} />
           </ListItem>

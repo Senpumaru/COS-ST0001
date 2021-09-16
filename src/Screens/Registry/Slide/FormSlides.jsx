@@ -9,7 +9,7 @@ import moment from "moment";
 import React, { useState } from "react";
 import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import PatientSearch from "../../../Components/Fields/PatientAutocomplete";
+import PatientAutocomplete from "../../../Components/Fields/PatientAutocomplete";
 import SpecTextField from "../../../Components/SpecTextField";
 import { CreateReset, createSlides } from "../../../Store/Slices/slideSlice";
 
@@ -84,7 +84,7 @@ function FormSlides() {
     <React.Fragment>
       <FormProvider>
         <form>
-          <PatientSearch />
+          <PatientAutocomplete />
 
           <Box pt={1}>
             {fields.map((item, index) => {

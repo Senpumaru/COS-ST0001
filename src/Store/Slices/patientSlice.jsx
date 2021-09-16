@@ -4,7 +4,7 @@ import axios from "axios";
 // State
 
 export const initialState = {
-  List: { Data: [""], Loading: false, Success: false, Error: false },
+  List: { Data: [], Loading: false, Success: false, Error: false },
   Create: {
     Loading: false,
     Success: false,
